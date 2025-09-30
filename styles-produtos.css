@@ -1,0 +1,64 @@
+
+@charset "UTF-8";
+
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
+:root{
+    --cor-banner:#0A7373;
+    --cor-fonte: #010221;
+    --cor-fundo:#dcdfc9;
+
+    --font-titulo:"Bebas Neue", sans-serif;
+    --font-corpo:"Sansation", sans-serif;
+}
+
+.principal{
+    min-height: 80vh;
+    
+}
+
+.titulo-produtos{
+    font-family: var(--font-corpo);
+    font-size: 2.5rem;
+    font-weight: bold;
+    padding: 0 0 5px 0;
+    color: var(--cor-fonte);
+    text-align: center;
+    margin-top: 35px;
+}
+
+.botoes-produtos{
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin: 50px 0 50px 0;
+    margin-top: 8%;
+}
+
+.botao{
+    background-color: aliceblue;
+    padding: 30px;
+    font-family:var(--font-corpo) ;
+    color: #EDAA25;
+    text-decoration: none;
+    font-size: 1.8rem;
+    font-weight: bold;
+    border-radius: 10px;
+    border: #EDAA25 2px solid;
+    box-shadow:2px 2px 2px 2px #010221a1;
+}
+
+.pimg-produtos{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 50px;
+    margin: 5% 0 5% 0;
+}
+
+.img-produto{
+    width: 280px;
+    height: 280px;
+    border-radius: 10px;
+    box-shadow:2px 2px 2px 2px #010221a1;
+}
