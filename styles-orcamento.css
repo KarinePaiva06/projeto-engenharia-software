@@ -120,6 +120,43 @@ button{
 #btnAddItem:hover{
     background-color: #218838;
 }
+
+textarea {
+    /* ... estilos de largura e borda ... */
+    resize: vertical; /* Permite ao usuário redimensionar apenas verticalmente */
+    min-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.rating-stars {
+    display: flex;
+    flex-direction: row-reverse; /* <-- ESSENCIAL: Inverte a ordem */
+    justify-content: flex-end;   /* Alinha as estrelas à esquerda */
+    /* ... */
+}
+.rating-stars input {
+    display: none; /* Oculta os botões de rádio (a bolinha) */
+}
+
+.rating-stars label {
+    font-size: 35px;
+    color: #ccc; /* Cor cinza para a estrela não selecionada */
+    cursor: pointer;
+    /* ... */
+}
+
+/* EFEITO HOVER: Preenche a estrela atual e as anteriores */
+.rating-stars label:hover,
+.rating-stars label:hover ~ label {
+    color: orange; 
+}
+
+/* EFEITO DE SELEÇÃO: Mantém a estrela e as anteriores preenchidas */
+.rating-stars input:checked ~ label {
+    color: gold; 
+}
+
 /*estilo especifico para o botao de enviar orçamento*/
 button[type="submit"]{
     background-color: var(--cor-banner);

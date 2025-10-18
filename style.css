@@ -125,7 +125,7 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgba(227, 218, 218, 0.741);
+    background-color:#daddc2;
     border-radius: 60px;
     margin-bottom: 20px;
     width: 80%;
@@ -142,7 +142,7 @@ body{
 }
 
 .subtitulo-apresentacao{
-    width: 80%;
+    width: 100%;
     font-family: var(--font-corpo);
     font-size: 1.25rem;
     padding: 5px 0 5px 0;
@@ -152,10 +152,10 @@ body{
 }
 
 .subtitulo-apresentacao02{
-    width: 60%;
+    width: 70%;
     font-family: var(--font-corpo);
     font-size: 1.25rem;
-    padding: 5px 0 5px 0;
+    padding: 15px 0 15px 0;
     margin-bottom:10px;
     color: var(--cor-fonte);
     text-align: center;
@@ -223,4 +223,62 @@ body{
     padding: 5px;
     height: auto;
     background-color: var(--cor-fonte);
+}
+
+@media (max-width: 560px) {
+    .container{
+        flex-direction: column;
+    }
+    .banner{
+        width: 80%;
+        margin: 0% 0 0 10%;
+    }
+
+    .menu-links{
+        font-size: 1rem;
+    }
+
+    .titulo-banner{
+        font-size: 2.5rem;
+        padding: 0 0 0 2%;
+    }
+
+    .subtitulo-banner{
+        font-size: 1.2rem;
+    }
+
+    .conteudo{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .img-loja{
+        width: 80%;
+        margin-bottom: 20px;
+    }
+
+    .img-princiapal{
+        width: 80%;
+        margin-bottom: 20px;
+    }
+
+    .titulo-apresentacao{
+        width: 100%;
+        font-size: 2rem;
+    }
+
+    .subtitulo-apresentacao02{
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .subtitulo-apresentacao{
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .texto-sobre{
+        width: 100%;
+        padding: 10px;
+    }
 }

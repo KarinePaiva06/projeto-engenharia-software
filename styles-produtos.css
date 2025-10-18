@@ -52,13 +52,41 @@
 .pimg-produtos{
     display: flex;
     justify-content: space-evenly;
-    gap: 50px;
+    gap: 2%;
     margin: 5% 0 5% 0;
 }
 
 .img-produto{
-    width: 280px;
-    height: 280px;
+    width: 20%;
+    height: 20%;
     border-radius: 10px;
     box-shadow:2px 2px 2px 2px #010221a1;
+}
+
+@media (max-width: 900px) {
+    .pimg-produtos{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .img-produto{
+        width: 60%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .botoes-produtos{
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        height: 30%;
+    }
+
+    .botao{
+        font-size: 1.5rem;
+        padding: 20px;
+        width: 40%;
+        text-align: center;
+    }
 }

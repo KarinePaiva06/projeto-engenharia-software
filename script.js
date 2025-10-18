@@ -118,6 +118,8 @@ form.addEventListener('submit', function(e) {
         idade: form.idade.value,
         email: form.email.value,
         telefone: form.telefone.value,
+        feedback: document.getElementById('feedback').value, 
+        avaliacao: document.querySelector('input[name="avaliacao"]:checked')?.value || null, 
         itens: [] // Array para guardar os produtos
     };
 
