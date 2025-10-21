@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles-login.css">
+</head>
+<body>
+    <header class="cabecalho">
+        <img class="logo" src="assets/logopaiva.png" alt="logo paiva">
+        <section class="banner">
+            <div class="textobanner">
+                <h1 class="titulo-banner">Paiva Materiais de Construção</h1>
+                <p class="subtitulo-banner">Os melhores materias, com qualidade e preço competitivo!</p>
+            </div>
+        </section>
+    </header>
+    <section class="login-section">
+        <div class="login-box">
+            <h2 class="titulo-produtos">Login</h2>
+            <form id="loginForm">
+                <div>
+                    <label for="username">Usuário:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div>
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button class="button" type="submit">Entrar</button>
+                <p id="errorMessage" style="color: red; display: none;">Usuário ou senha incorretos.</p>
+            </form>
+        </div>
+    </section>
+    <script src="login.js"></script>
+    <footer class="rodape">
+        <div class="textorodape">
+            <h3 class="titulo-rodape">Obrigada por escolher o Paiva Materiais! </h3>
+            <p class="subtitulo-rodape">Desenvolvido pelo 3º semestre do curso de Gestão da Tecnologia da Informação</p>
+            <p class="subtitulo-rodape">Fatec Itaquaquecetuba - 2025</p>
+        </div>
+        <img class="logo-fatec" src="assets/logofatec.png" alt="logo fatec">
+    </footer>
+</body>
+</html>

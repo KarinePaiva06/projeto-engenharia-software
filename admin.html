@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles-admin.css">
+</head>
+<body>
+    <header class="cabecalho">
+        <img class="logo" src="assets/logopaiva.png" alt="logo paiva">
+        <section class="banner">
+            <div class="textobanner">
+                <h1 class="titulo-banner">Paiva Materiais de Construção</h1>
+                <p class="subtitulo-banner">Os melhores materias, com qualidade e preço competitivo!</p>
+            </div>
+        </section>
+    </header>
+    <div class="admin-header">
+        <h1>Painel de Controle</h1>
+        <nav>
+            <button id="logoutBtn"> Sair</button>
+        </nav>
+    </div>
+
+    <main class="admin-container">
+        <section id="adicionarProduto">
+            <h2>Cadastrar novo Produto</h2>
+            <form class="formProduto" id="formNovoProduto">
+                <div>
+                    <label for="nomeProduto">Nome do Produto:</label>
+                    <input type="text" id="nomeProduto" name="nome" required>
+                </div>
+                <div>
+                    <label for="precoProduto">Preço (R$):</label>
+                    <input type="number" id="precoProduto" name="valor" step="0.01" min="0" required>
+                </div>
+                <button type="submit">Cadastrar Produto</button>
+            </form>
+        </section>
+
+        <section id="gerenciarProdutos">
+            <h2>Gerenciar Produtos Existentes</h2>
+            <p id="loadingProdutos">Carregando lista de produtos...</p>
+            <table id="tabelaProdutos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </section>   
+        <section id="formulariosRecebidos">
+          <h2>Formulários de Orçamento Recebidos</h2>
+          <p id="loadingOrcamentos">Carregando dados dos orçamentos...</p>
+    
+          <div
+              id="orcamentosContainer" class="card-grid">
+          </div>
+       </section> 
+    </main>
+    
+    <script src="admin.js"></script>
+     <footer class="rodape">
+        <div class="textorodape">
+            <h3 class="titulo-rodape">Obrigada por escolher o Paiva Materiais! </h3>
+            <p class="subtitulo-rodape">Desenvolvido pelo 3º semestre do curso de Gestão da Tecnologia da Informação</p>
+            <p class="subtitulo-rodape">Fatec Itaquaquecetuba - 2025</p>
+        </div>
+        <img class="logo-fatec" src="assets/logofatec.png" alt="logo fatec">
+    </footer>
+
+</body>
+</html>
