@@ -17,6 +17,7 @@
     padding: 0;
 }
  body{
+    height: 100vh;
     min-height: 100vh;
     align-items: baseline;
     font-family: var(--font-corpo);
