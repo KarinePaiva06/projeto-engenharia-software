@@ -1,171 +1,359 @@
 // ----------------------------------------------------
-// 1. DADOS DE PRODUTOS (SIMULAÇÃO DA API)
+// 1. CONFIGURAÇÃO DA API
 // ----------------------------------------------------
-
-// Em um projeto real, você substituiria esta constante 
-// pela chamada 'fetch' ou 'axios' para sua API.
-const listaProdutosAPI = [
-    { id: '1', nome: 'Serviço A', valor: 100.00 },
-    { id: '2', nome: 'Produto B', valor: 50.50 },
-    { id: '3', nome: 'Licença C', valor: 250.00 },
-    { id: '4', nome: 'Pacote D', valor: 75.00 },
-];
+const API_URL = '/api';
 
 // ----------------------------------------------------
 // 2. CAPTURA DE ELEMENTOS DO HTML
 // ----------------------------------------------------
-
 const itensContainer = document.getElementById('itensContainer');
 const btnAddItem = document.getElementById('btnAddItem');
 const form = document.getElementById('formOrcamento');
 
 // ----------------------------------------------------
-// 3. FUNÇÃO DE POPULAR O DROPDOWN (SELECT)
+// 3. FUNÇÃO PARA BUSCAR PRODUTOS DO BANCO DE DADOS
 // ----------------------------------------------------
 
 /**
- * Pega a lista de produtos (simulada) e cria as tags <option> dentro de um <select>.
- * @param {HTMLSelectElement} selectElement - O elemento <select> a ser populado.
+ * Busca produtos do banco de dados via API
  */
-function popularProdutos(selectElement) {
-    // 1. Resetar o conteúdo, mantendo apenas a opção padrão
-    selectElement.innerHTML = '<option value="" disabled selected>Selecione um Produto</option>';
-
-    // 2. Percorrer a lista de produtos da API
-    listaProdutosAPI.forEach(produto => {
-        // 3. Criar a nova tag <option>
-        const option = document.createElement('option');
+async function buscarProdutosDaAPI() {
+    try {
+        const response = await fetch(`${API_URL}/produtos-public`);
         
-        // 4. Definir o nome visível
-        option.textContent = produto.nome;
+        if (!response.ok) {
+            throw new Error('Erro ao carregar produtos');
+        }
         
-        // 5. Definir o valor a ser enviado ao servidor
-        option.value = produto.id;
-        
-        // 6. Armazenar o preço (valor) em um atributo de dados, se necessário
-        option.setAttribute('data-valor', produto.valor);
-
-        // 7. Inserir a <option> dentro do <select>
-        selectElement.appendChild(option);
-    });
+        const produtos = await response.json();
+        return produtos;
+    } catch (error) {
+        console.error('Erro ao buscar produtos:', error);
+        // Fallback para produtos simulados em caso de erro
+        return [
+            { id_produto: '1', nome_produto: 'Serviço A', preco_produto: 100.00 },
+            { id_produto: '2', nome_produto: 'Produto B', preco_produto: 50.50 },
+            { id_produto: '3', nome_produto: 'Licença C', preco_produto: 250.00 },
+            { id_produto: '4', nome_produto: 'Pacote D', preco_produto: 75.00 },
+        ];
+    }
 }
 
-// 8. Chamar a função para o primeiro campo de produto quando a página carrega
-const primeiroSelect = itensContainer.querySelector('.select-produto');
-popularProdutos(primeiroSelect);
+/**
+ * Pega a lista de produtos da API e cria as tags <option> dentro de um <select>.
+ * @param {HTMLSelectElement} selectElement - O elemento <select> a ser populado.
+ */
+async function popularProdutos(selectElement) {
+    try {
+        // 1. Buscar produtos do banco de dados
+        const produtos = await buscarProdutosDaAPI();
+        
+        // 2. Resetar o conteúdo, mantendo apenas a opção padrão
+        selectElement.innerHTML = '<option value="" disabled selected>Selecione um Produto</option>';
+
+        // 3. Percorrer a lista de produtos da API
+        produtos.forEach(produto => {
+            // 4. Criar a nova tag <option>
+            const option = document.createElement('option');
+            
+            // 5. Definir o nome visível com preço formatado
+            const precoFormatado = parseFloat(produto.preco_produto).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            option.textContent = `${produto.nome_produto} - ${precoFormatado}`;
+            
+            // 6. Definir o valor a ser enviado ao servidor (id_produto do banco)
+            option.value = produto.id_produto;
+            
+            // 7. Armazenar o preço em um atributo de dados para cálculos futuros
+            option.setAttribute('data-valor', produto.preco_produto);
+            option.setAttribute('data-nome', produto.nome_produto);
+
+            // 8. Inserir a <option> dentro do <select>
+            selectElement.appendChild(option);
+        });
+        
+        console.log('Produtos carregados do banco:', produtos);
+    } catch (error) {
+        console.error('Erro ao popular produtos:', error);
+    }
+}
 
 // ----------------------------------------------------
-// 4. FUNÇÃO DE ADICIONAR NOVO ITEM
+// 4. FUNÇÕES PARA CALCULAR E MOSTRAR PREÇO TOTAL
 // ----------------------------------------------------
 
-function adicionarNovoItem() {
+function calcularPrecoTotal() {
+    let total = 0;
+    const itensAdicionados = document.querySelectorAll('.item-produto');
+    
+    itensAdicionados.forEach(item => {
+        const select = item.querySelector('.select-produto');
+        const quantidadeInput = item.querySelector('.input-quantidade');
+        
+        if (select.value) {
+            const precoUnitario = parseFloat(select.selectedOptions[0].getAttribute('data-valor'));
+            const quantidade = parseInt(quantidadeInput.value) || 0;
+            total += precoUnitario * quantidade;
+        }
+    });
+    
+    return total;
+}
+
+function atualizarDisplayPrecoTotal() {
+    const total = calcularPrecoTotal();
+    let displayTotal = document.getElementById('displayTotal');
+    
+    // Criar o elemento se não existir
+    if (!displayTotal) {
+        displayTotal = document.createElement('div');
+        displayTotal.id = 'displayTotal';
+        displayTotal.style.cssText = `
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center;
+        `;
+        // Inserir antes do botão de enviar
+        const submitButton = form.querySelector('button[type="submit"]');
+        form.insertBefore(displayTotal, submitButton);
+    }
+    
+    const totalFormatado = total.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+    
+    displayTotal.innerHTML = `💰 <strong>TOTAL ESTIMADO:</strong> ${totalFormatado}`;
+}
+
+function atualizarPrecoUnitario(selectElement) {
+    const selectedOption = selectElement.selectedOptions[0];
+    const itemContainer = selectElement.closest('.item-produto');
+    let precoUnitarioDisplay = itemContainer.querySelector('.preco-unitario');
+    
+    if (selectedOption && selectedOption.value) {
+        const precoUnitario = parseFloat(selectedOption.getAttribute('data-valor'));
+        const precoFormatado = precoUnitario.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        
+        if (!precoUnitarioDisplay) {
+            precoUnitarioDisplay = document.createElement('div');
+            precoUnitarioDisplay.className = 'preco-unitario';
+            precoUnitarioDisplay.style.cssText = `
+                font-size: 0.9em;
+                color: #666;
+                margin-top: 5px;
+                font-style: italic;
+            `;
+            selectElement.parentNode.appendChild(precoUnitarioDisplay);
+        }
+        
+        precoUnitarioDisplay.textContent = `Preço unitário: ${precoFormatado}`;
+    } else if (precoUnitarioDisplay) {
+        precoUnitarioDisplay.textContent = '';
+    }
+}
+
+// ----------------------------------------------------
+// 5. INICIALIZAÇÃO E EVENT LISTENERS
+// ----------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const primeiroSelect = itensContainer.querySelector('.select-produto');
+    await popularProdutos(primeiroSelect);
+    
+    // Atualizar quando a quantidade mudar
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('input-quantidade')) {
+            atualizarDisplayPrecoTotal();
+        }
+    });
+    
+    // Atualizar quando o produto selecionado mudar
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('select-produto')) {
+            atualizarPrecoUnitario(e.target);
+            atualizarDisplayPrecoTotal();
+        }
+    });
+    
+    // Atualizar display inicial
+    setTimeout(atualizarDisplayPrecoTotal, 100);
+});
+
+// ----------------------------------------------------
+// 6. FUNÇÃO DE ADICIONAR NOVO ITEM
+// ----------------------------------------------------
+
+async function adicionarNovoItem() {
     // 1. Pega o primeiro item (o modelo)
     const modeloItem = itensContainer.querySelector('.item-produto');
 
-    // 2. Clona o modelo com todos os seus filhos (os campos de select e input)
+    // 2. Clona o modelo com todos os seus filhos
     const novoItem = modeloItem.cloneNode(true);
 
     // 3. Resetar os valores do novo item
     const novoSelect = novoItem.querySelector('.select-produto');
     const novaQuantidade = novoItem.querySelector('.input-quantidade');
     
-    // Assegura que o novo <select> e <input> estejam limpos e resetados
-    novoSelect.selectedIndex = 0; 
+    // Limpar o select primeiro
+    novoSelect.innerHTML = '<option value="" disabled selected>Selecione um Produto</option>';
+    
+    // 4. Popular o novo select com produtos do banco
+    await popularProdutos(novoSelect);
+    
+    // Resetar quantidade
     novaQuantidade.value = 1;
 
-    // 4. ADICIONAR BOTÃO DE REMOVER
-    // Criamos um botão para permitir que o usuário desista de um item
+    // 5. ADICIONAR BOTÃO DE REMOVER
     const btnRemover = document.createElement('button');
     btnRemover.type = 'button';
     btnRemover.textContent = 'Remover';
-    btnRemover.classList.add('btn-remover'); // Para você estilizar no CSS
+    btnRemover.classList.add('btn-remover');
     
-    // Define o que acontece ao clicar: ele remove o div pai (.item-produto)
-    btnRemover.onclick = () => novoItem.remove();
-
+    btnRemover.onclick = () => {
+        novoItem.remove();
+        atualizarDisplayPrecoTotal();
+    };
     novoItem.appendChild(btnRemover);
 
-    // 5. Adiciona o item recém-clonado e resetado ao container
+    // 6. Adiciona o item recém-clonado ao container
     itensContainer.appendChild(novoItem);
+    
+    // 7. Atualizar o preço total após adicionar novo item
+    setTimeout(atualizarDisplayPrecoTotal, 100);
 }
 
-// 6. Associar a função ao clique do botão "+"
+// 8. Associar a função ao clique do botão "+"
 btnAddItem.addEventListener('click', adicionarNovoItem);
 
 // ----------------------------------------------------
-// 5. PROCESSAMENTO E ENVIO DO FORMULÁRIO
+// 7. PROCESSAMENTO E ENVIO DO FORMULÁRIO
 // ----------------------------------------------------
 
-form.addEventListener('submit', function(e) {
-    e.preventDefault(); // 1. IMPEDE O ENVIO PADRÃO DO NAVEGADOR
+// No script.js, na parte do evento de submit, modifique a coleta de dados:
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-    // A validação 'required' do HTML já cuida da maioria dos campos.
+    // Validações básicas
     if (!form.checkValidity()) {
-        // Se a validação do HTML falhar, o navegador já mostra o erro.
+        alert('Por favor, preencha todos os campos obrigatórios.');
         return;
     }
 
-    // 2. VALIDAÇÃO EXTRA (Ex: Idade)
     const idadeInput = document.getElementById('idade');
     if (parseInt(idadeInput.value) < 18) {
         alert('A idade deve ser maior ou igual a 18 anos.');
         return;
     }
     
-    // 3. COLETA DOS DADOS DE CONTATO
+    // Coletar dados - FEEDBACK AGORA É OPCIONAL
     const dadosParaAPI = {
-        nome: form.nome.value,
-        idade: form.idade.value,
-        email: form.email.value,
-        telefone: form.telefone.value,
-        feedback: document.getElementById('feedback').value, 
-        avaliacao: document.querySelector('input[name="avaliacao"]:checked')?.value || null, 
-        itens: [] // Array para guardar os produtos
+        nome: form.nome.value.trim(),
+        idade: parseInt(form.idade.value),
+        email: form.email.value.trim(),
+        telefone: form.telefone.value.trim(),
+        feedback: document.getElementById('feedback').value.trim() || null, // Pode ser null
+        avaliacao: document.querySelector('input[name="avaliacao"]:checked')?.value || null, // Pode ser null
+        itens: []
     };
 
-    // 4. COLETA DOS ITENS ADICIONADOS DINAMICAMENTE
+    // Coletar itens
     const itensAdicionados = document.querySelectorAll('.item-produto');
+    let temItemValido = false;
     
     itensAdicionados.forEach(item => {
         const produtoId = item.querySelector('.select-produto').value;
         const quantidade = item.querySelector('.input-quantidade').value;
 
-        if (produtoId) { // Verifica se um produto foi selecionado (ID é diferente de "")
+        if (produtoId && quantidade > 0) {
             dadosParaAPI.itens.push({
-                produto_id: produtoId, // ID que veio da API
+                produto_id: parseInt(produtoId),
                 quantidade: parseInt(quantidade)
             });
+            temItemValido = true;
         }
     });
 
-    // 5. VALIDAÇÃO FINAL (pelo menos um produto deve ter sido adicionado)
-    if (dadosParaAPI.itens.length === 0) {
-        alert('Por favor, adicione pelo menos um item ao orçamento.');
+    if (!temItemValido) {
+        alert('Por favor, adicione pelo menos um item válido ao orçamento.');
         return;
     }
 
-    // 6. ENVIAR OS DADOS PARA O BACK-END (API)
-    console.log('Dados prontos para enviar à API:', dadosParaAPI);
-    
-    // Exemplo de como você enviaria (usando a função 'fetch' nativa):
-    /*
-    fetch('/sua-api-url/orcamentos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dadosParaAPI),
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Orçamento enviado com sucesso! Número: ' + data.numero_orcamento);
-    })
-    .catch(error => {
-        console.error('Erro ao enviar o orçamento:', error);
-        alert('Ocorreu um erro ao enviar o orçamento.');
-    });
-    */
+    console.log('Enviando dados para API:', dadosParaAPI);
 
-    alert('Orçamento simulado enviado! (Dados no console)');
-    form.reset();
+    // Mostrar loading
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'Enviando...';
+    submitButton.disabled = true;
+
+    try {
+        const response = await fetch('/api/orcamentos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dadosParaAPI),
+        });
+        
+        const responseData = await response.json();
+        console.log('Resposta da API:', responseData);
+        
+        if (response.ok) {
+            const totalFinal = calcularPrecoTotal();
+            const totalFormatado = totalFinal.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            
+            alert(`✅ ${responseData.message}\n\nNúmero: ${responseData.numero_orcamento}\nTotal: ${totalFormatado}\n\nEm breve entraremos em contato!`);
+            
+            // Limpar formulário
+            limparFormulario();
+            
+        } else {
+            throw new Error(responseData.message || `Erro ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.error('Erro completo:', error);
+        alert(`❌ Falha ao enviar orçamento: ${error.message}`);
+    } finally {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+    }
 });
+
+function limparFormulario() {
+    form.reset();
+    
+    // Limpar itens dinâmicos, mantendo apenas o primeiro
+    const itensParaRemover = document.querySelectorAll('.item-produto:not(:first-child)');
+    itensParaRemover.forEach(item => item.remove());
+    
+    // Resetar o primeiro item
+    const primeiroSelect = itensContainer.querySelector('.select-produto');
+    primeiroSelect.selectedIndex = 0;
+    const primeiraQuantidade = itensContainer.querySelector('.input-quantidade');
+    primeiraQuantidade.value = 1;
+    
+    // Limpar displays
+    const precosUnitarios = document.querySelectorAll('.preco-unitario');
+    precosUnitarios.forEach(preco => preco.remove());
+    
+    // Limpar estrelas selecionadas
+    const estrelasSelecionadas = document.querySelectorAll('input[name="avaliacao"]:checked');
+    estrelasSelecionadas.forEach(estrela => estrela.checked = false);
+    
+    atualizarDisplayPrecoTotal();
+}

@@ -1,0 +1,21 @@
+{
+  "name": "paiva-api-completo",
+  "version": "1.0.0",
+  "description": "API Express para Paiva Materiais (MySQL) - serve frontend e usa bcrypt",
+  "main": "api.js",
+  "scripts": {
+    "start": "node api.js",
+    "dev": "node api.js",
+    "init-admin": "node init_admin.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.15.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
